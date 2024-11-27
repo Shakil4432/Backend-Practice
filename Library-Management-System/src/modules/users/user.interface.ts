@@ -1,11 +1,12 @@
 import { Types } from "mongoose";
 
-export type IAuthor = {
+export type IUser = {
   name: {
     firstName: string;
     middleName?: string;
     lastName: string;
   };
-  biography: string;
-  books: Types.ObjectId[];
+  email: string;
+  role: "admin" | "member";
+  borrowed_books: Types.ObjectId[];
 };

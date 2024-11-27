@@ -1,6 +1,8 @@
+import { Types } from "mongoose";
+
 export type Ibook = {
   title: string;
-  author: string;
+  author: Types.ObjectId;
   ISBN: string;
   category: "fiction" | "non-fiction" | "science";
   availableCopies: number;

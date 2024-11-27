@@ -20,7 +20,7 @@ const authorSchema = new Schema<IAuthor>({
     required: [true, "Biography is required"],
   },
   books: {
-    type: [String],
+    type: [{ type: Schema.Types.ObjectId, ref: "book" }],
     required: [true, "Books are required"],
   },
 });
