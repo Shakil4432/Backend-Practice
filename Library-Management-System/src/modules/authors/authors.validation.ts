@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { z } from "zod";
 
 const authorValidationSchema = z.object({
@@ -14,9 +15,12 @@ const authorValidationSchema = z.object({
   }),
   biography: z.string(),
   books: z.array(
-    z.string().refine((value) => value.match(/^[a-fA-F0-9]{24}$/), {
-      message: "Invalid book ID",
-    })
+    z
+      .string()
+      .refine((value) => Types.ObjectId.isValid(value), {
+        message: "Invalid book ID",
+      })
+      .transform((value) => new Types.ObjectId(value))
   ),
 });
 
