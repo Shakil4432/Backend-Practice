@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IAuthor } from "./authors.interface";
+import { TAuthor } from "./authors.interface";
 
-const authorSchema = new Schema<IAuthor>({
+const authorSchema = new Schema<TAuthor>({
   name: {
     firstName: {
       type: String,
@@ -25,4 +25,4 @@ const authorSchema = new Schema<IAuthor>({
   },
 });
 
-export const authorModel = model<IAuthor>("author", authorSchema);
+export const authorModel = model<TAuthor>("author", authorSchema);

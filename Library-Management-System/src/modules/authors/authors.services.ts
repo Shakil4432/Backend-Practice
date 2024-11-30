@@ -1,7 +1,7 @@
-import { IAuthor } from "./authors.interface";
+import { TAuthor } from "./authors.interface";
 import { authorModel } from "./authors.model";
 
-const createAuthorIntoDB = async (author: IAuthor) => {
+const createAuthorIntoDB = async (author: TAuthor) => {
   const result = await authorModel.create(author);
   return result;
 };
