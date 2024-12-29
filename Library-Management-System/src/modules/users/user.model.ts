@@ -1,27 +1,55 @@
-import { model, Schema } from "mongoose";
-import { IUser } from "./user.interface";
+import { model, Schema, Types } from "mongoose";
+import { TUser, UserModel } from "./user.interface";
+import bcrypt from "bcrypt";
+import config from "../../config";
 
-const userSchema = new Schema<IUser>({
-  name: {
-    firstName: {
-      type: String,
-      required: [true, "Name is required"],
-    },
-    middleName: {
-      type: String,
-    },
-    lastName: {
-      type: String,
-      required: [true, "Name is required"],
-    },
+const BorrowBookSchema = new Schema(
+  {
+    bookId: { type: Types.ObjectId, required: true, ref: "Book" },
+    borrowDate: { type: Date, required: true },
+    dueDate: { type: Date, required: true },
+    returnDate: { type: Date, default: null },
+    finePaid: { type: Boolean, default: false },
   },
-  role: {
-    type: String,
-    enum: ["admin", "member"],
-    default: "member",
+  { _id: false }
+);
+
+const UserSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: { type: String, required: true },
+    role: {
+      type: String,
+      enum: ["admin", "librarian", "member"],
+      default: "member",
+    },
+    isBlocked: { type: Boolean, default: false },
+    borrowedBooks: { type: [BorrowBookSchema], default: [] },
+    isActive: { type: Boolean, default: true },
   },
-  email: { type: String, required: [true, "Email is required"], unique: true },
-  borrowed_books: [{ type: Schema.Types.ObjectId, ref: "book" }],
+  {
+    timestamps: true,
+  }
+);
+
+UserSchema.pre("save", async function (next) {
+  const user = this;
+  user.password = await bcrypt.hash(this.password, Number(config.salt_round));
+  next();
 });
 
-export const UserModel = model<IUser>("user", userSchema);
+UserSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashPassword
+) {
+  return await bcrypt.compare(plainTextPassword, hashPassword);
+};
+
+export const User = model<TUser, UserModel>("user", UserSchema);

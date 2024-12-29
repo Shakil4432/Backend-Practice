@@ -1,11 +1,7 @@
 import { Types } from "mongoose";
 
-export type IAuthor = {
-  name: {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-  };
+export type TAuthor = {
+  name: string;
   biography: string;
   books: Types.ObjectId[];
 };

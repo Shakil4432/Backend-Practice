@@ -1,50 +1,52 @@
 import { model, Schema } from "mongoose";
-import { Ibook } from "./books.interface";
-
-const bookSchema = new Schema<Ibook>({
+import { TBook } from "./books.interface";
+const BookSchema = new Schema<TBook>({
   title: {
     type: String,
-    required: [true, "title is required"],
+    required: [true, "Book title is required"],
     trim: true,
   },
   author: {
     type: Schema.Types.ObjectId,
-    required: [true, "author is required"],
-    ref: "Author", // Assuming you have an Author model for reference
+    ref: "Author",
+    required: [true, "Author is required"],
   },
-  ISBN: {
+  genre: {
+    type: String,
+    required: [true, "Genre is required"],
+    trim: true,
+  },
+  isbn: {
     type: String,
     required: [true, "ISBN is required"],
-    unique: true, // Ensure ISBN is unique
-    validate: {
-      validator: (value: string) =>
-        /^(?:\d{9}X|\d{10}|\d{13}|\d{3}-\d{1,5}-\d{1,7}-\d{1,7}-\d{1})$/.test(
-          value
-        ),
-      message: "Invalid ISBN format",
-    },
+    unique: true,
+    trim: true,
   },
-  category: {
+  language: {
     type: String,
-    enum: ["fiction", "non-fiction", "science"],
-    required: [true, "category is required"],
+    required: [true, "Language is required"],
   },
-  availableCopies: {
+  publicationYear: {
     type: Number,
-    required: [true, "availableCopies is required"],
-    min: [1, "availableCopies must be at least 1"],
-    validate: {
-      validator: function (this: Ibook, value: number) {
-        return value <= this.totalCopies;
-      },
-      message: "availableCopies cannot exceed totalCopies",
-    },
+    required: [true, "Publication year is required"],
+    min: [0, "Publication year cannot be negative"],
   },
   totalCopies: {
     type: Number,
-    required: [true, "totalCopies is required"],
-    min: [1, "totalCopies must be at least 1"],
+    required: [true, "Total copies are required"],
+    min: [0, "Total copies cannot be negative"],
+  },
+  availableCopies: {
+    type: Number,
+    required: [true, "Available copies are required"],
+    min: [0, "Available copies cannot be negative"],
+    validate: {
+      validator: function (this: TBook) {
+        return this.availableCopies <= this.totalCopies;
+      },
+      message: "Available copies cannot exceed total copies",
+    },
   },
 });
 
-export const bookModel = model<Ibook>("book", bookSchema);
+export const bookModel = model<TBook>("Books", BookSchema);

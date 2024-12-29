@@ -1,33 +1,22 @@
 import { z } from "zod";
-import { Types } from "mongoose";
 
-const userValidationSchema = z.object({
-  name: z.object({
-    firstName: z
-      .string()
-      .min(1)
-      .max(20)
-      .refine((value) => /^[A-Z]/.test(value), {
-        message: "First letter must be a capital letter",
-      }),
-    middleName: z.string().optional(),
-    lastName: z.string().min(1).max(20),
-  }),
-  role: z
-    .enum(["admin", "member"], { message: "role is required" })
-    .default("member"),
-
-  email: z.string().email(),
-  borrowed_books: z.array(
-    z
-      .string()
-      .refine((value) => Types.ObjectId.isValid(value), {
-        message: "Book ID is invalid",
-      })
-      .transform((value) => new Types.ObjectId(value))
-  ),
+const BorrowBookSchema = z.object({
+  bookId: z.string().min(1, "Book ID is required"),
+  borrowDate: z.date(),
+  dueDate: z.date(),
+  returnDate: z.date().optional(),
+  finePaid: z.boolean(),
 });
 
+const UserValidationSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+  role: z.enum(["admin", "librarian", "member"]).default("member"),
+  isBlocked: z.boolean().default(false),
+  borrowedBooks: z.array(BorrowBookSchema).optional().default([]),
+  isActive: z.boolean().default(true),
+});
 export const userValidation = {
-  userValidationSchema,
+  UserValidationSchema,
 };

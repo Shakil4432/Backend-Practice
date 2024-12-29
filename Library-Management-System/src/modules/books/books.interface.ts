@@ -1,10 +1,13 @@
 import { Types } from "mongoose";
 
-export type Ibook = {
+export type TBook = {
   title: string;
   author: Types.ObjectId;
-  ISBN: string;
-  category: "fiction" | "non-fiction" | "science";
-  availableCopies: number;
+  genre: string;
+  isbn: string;
+  language: string;
+  publicationYear: number;
   totalCopies: number;
+  availableCopies: number;
+  coverImageUrl?: string;
 };
